@@ -18,7 +18,7 @@ public class Usuario {
 	private Integer id;
 	private String nombre;
 	private String telefono;
-	private String correo;
+	private String email;
 	private String direccion;
 	private String rol;
 	private String password;
@@ -35,13 +35,13 @@ public class Usuario {
 	}
 
 	// Constructor con campos
-	public Usuario(Integer id, String nombre, String telefono, String correo, String direccion, String rol,
+	public Usuario(Integer id, String nombre, String telefono, String email, String direccion, String rol,
 			String password) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.telefono = telefono;
-		this.correo = correo;
+		this.email = email;
 		this.direccion = direccion;
 		this.rol = rol;
 		this.password = password;
@@ -72,11 +72,11 @@ public class Usuario {
 	}
 
 	public String getCorreo() {
-		return correo;
+		return email;
 	}
 
 	public void setCorreo(String correo) {
-		this.correo = correo;
+		this.email = email;
 	}
 
 	public String getDireccion() {
@@ -105,7 +105,7 @@ public class Usuario {
 
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", nombre=" + nombre + ", telefono=" + telefono + ", correo=" + correo
+		return "Usuario [id=" + id + ", nombre=" + nombre + ", telefono=" + telefono + ", email=" + email
 				+ ", direccion=" + direccion + ", rol=" + rol + ", password=" + password + "]";
 	}
 
