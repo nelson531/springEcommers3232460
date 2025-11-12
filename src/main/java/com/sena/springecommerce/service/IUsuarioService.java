@@ -17,7 +17,7 @@ public interface IUsuarioService {
 
 	Optional<Usuario> findById(Integer id);
 
-	Optional<Usuario> findByEmail(Integer email);
+	Optional<Usuario> findByEmail(String email);
 
 	List<Usuario> findAll();
 

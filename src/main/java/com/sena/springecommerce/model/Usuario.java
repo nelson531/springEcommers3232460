@@ -71,11 +71,11 @@ public class Usuario {
 		this.telefono = telefono;
 	}
 
-	public String getCorreo() {
+	public String getEmail() {
 		return email;
 	}
 
-	public void setCorreo(String correo) {
+	public void setEmail(String email) {
 		this.email = email;
 	}
 
@@ -109,4 +109,7 @@ public class Usuario {
 				+ ", direccion=" + direccion + ", rol=" + rol + ", password=" + password + "]";
 	}
 
+	
+		
 }
+

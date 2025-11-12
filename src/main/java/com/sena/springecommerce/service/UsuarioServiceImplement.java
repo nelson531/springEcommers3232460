@@ -47,7 +47,7 @@ public class UsuarioServiceImplement implements IUsuarioService {
 	}
 
 	@Override
-	public Optional<Usuario> findByEmail(Integer email) {
+	public Optional<Usuario> findByEmail(String email) {
 		// TODO Auto-generated method stub
 		return usuarioRepository.findByEmail(email);
 	}
@@ -55,7 +55,7 @@ public class UsuarioServiceImplement implements IUsuarioService {
 	@Override
 	public List<Usuario> findAll() {
 		// TODO Auto-generated method stub
-		return null;
+		return usuarioRepository.findAll();
 	}
 
 }
