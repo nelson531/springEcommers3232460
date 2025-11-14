@@ -1,107 +1,83 @@
 package com.sena.springecommerce.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
-@Table(name = "detalles")
 @Entity
+@Table(name = "detalles")
 public class DetalleOrden {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	private Integer id;
-	private String nombre;
-	private Integer cantidad;
-	private Double precio;
-	private Double total;
+    private String nombre;
+    private Integer cantidad;
+    private Double precio;
+    private Double total;
 
-	@ManyToOne
-	private Orden orden;
+    @ManyToOne
+    @JoinColumn(name = "orden_id")
+    private Orden orden;
 
-	@ManyToOne
-	private Producto producto;
+    @ManyToOne
+    @JoinColumn(name = "producto_id")
+    private Producto producto;
 
-	public DetalleOrden() {
+    public DetalleOrden() {}
 
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public DetalleOrden(Integer id, String nombre, Integer cantidad, Double precio, Double total, Orden orden,
-			Producto producto) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.cantidad = cantidad;
-		this.precio = precio;
-		this.total = total;
-		this.orden = orden;
-		this.producto = producto;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    public Integer getCantidad() {
+        return cantidad;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
+    }
 
-	public Integer getCantidad() {
-		return cantidad;
-	}
+    public Double getPrecio() {
+        return precio;
+    }
 
-	public void setCantidad(Integer cantidad) {
-		this.cantidad = cantidad;
-	}
+    public void setPrecio(Double precio) {
+        this.precio = precio;
+    }
 
-	public Double getPrecio() {
-		return precio;
-	}
+    public Double getTotal() {
+        return total;
+    }
 
-	public void setPrecio(Double precio) {
-		this.precio = precio;
-	}
+    public void setTotal(Double total) {
+        this.total = total;
+    }
 
-	public Double getTotal() {
-		return total;
-	}
+    public Orden getOrden() {
+        return orden;
+    }
 
-	public void setTotal(Double total) {
-		this.total = total;
-	}
+    public void setOrden(Orden orden) {
+        this.orden = orden;
+    }
 
-	public Orden getOrden() {
-		return orden;
-	}
+    public Producto getProducto() {
+        return producto;
+    }
 
-	public void setOrden(Orden orden) {
-		this.orden = orden;
-	}
-
-	public Producto getProducto() {
-		return producto;
-	}
-
-	public void setProducto(Producto producto) {
-		this.producto = producto;
-	}
-
-	@Override
-	public String toString() {
-		return "DetalleOrden [id=" + id + ", nombre=" + nombre + ", cantidad=" + cantidad + ", precio=" + precio
-				+ ", total=" + total + ", orden=" + orden + ", producto=" + producto + "]";
-	}
-
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
 }

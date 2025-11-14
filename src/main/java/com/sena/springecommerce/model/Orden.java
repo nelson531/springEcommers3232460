@@ -1,43 +1,32 @@
 package com.sena.springecommerce.model;
 
+import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-
-@Table(name = "ordenes")
 @Entity
+@Table(name = "ordenes")
 public class Orden {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+
 	private String numero;
-	private Date fechacreacion;
-	private Double total;
+
+	private LocalDate fechaCreacion;
+
+	private Double total = 0.0;
 
 	@ManyToOne
+	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
 
-	@OneToMany(mappedBy = "orden")
-	private List<DetalleOrden> detalle = new ArrayList<>(); // ✅ Se inicializa aquí
+	@OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DetalleOrden> detalles = new ArrayList<>();
 
 	public Orden() {
-	}
-
-	public Orden(Integer id, String numero, Date fechacreacion, Double total) {
-		super();
-		this.id = id;
-		this.numero = numero;
-		this.fechacreacion = fechacreacion;
-		this.total = total;
 	}
 
 	public Integer getId() {
@@ -56,19 +45,19 @@ public class Orden {
 		this.numero = numero;
 	}
 
-	public Date getFechacreacion() {
-		return fechacreacion;
+	public LocalDate getFechaCreacion() {
+		return fechaCreacion;
 	}
 
-	public void setFechacreacion(Date fechacreacion) {
-		this.fechacreacion = fechacreacion;
+	public void setFechaCreacion(LocalDate fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
 	}
 
-	public Double getTotal() {
+	public double getTotal() {
 		return total;
 	}
 
-	public void setTotal(Double total) {
+	public void setTotal(double total) {
 		this.total = total;
 	}
 
@@ -80,16 +69,22 @@ public class Orden {
 		this.usuario = usuario;
 	}
 
-	public List<DetalleOrden> getDetalle() {
-		return detalle;
+	public List<DetalleOrden> getDetalles() {
+		return detalles;
 	}
 
-	public void setDetalle(List<DetalleOrden> detalle) {
-		this.detalle = detalle;
+	public void setDetalles(List<DetalleOrden> detalles) {
+		this.detalles = detalles;
 	}
 
-	@Override
-	public String toString() {
-		return "Orden [id=" + id + ", numero=" + numero + ", fechacreacion=" + fechacreacion + ", Total=" + total + "]";
+	// Método para asignar detalles a una orden
+	public void addDetalle(DetalleOrden detalle) {
+		detalle.setOrden(this);
+		this.detalles.add(detalle);
+	}
+
+	// Calcular total
+	public void calcularTotal() {
+		this.total = detalles.stream().mapToDouble(DetalleOrden::getTotal).sum();
 	}
 }

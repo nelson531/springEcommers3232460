@@ -9,98 +9,81 @@ import com.sena.springecommerce.service.IOrdenService;
 import com.sena.springecommerce.service.IProductoService;
 import com.sena.springecommerce.service.IUsuarioService;
 
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/apiordenes")
 @CrossOrigin(origins = "*")
 public class APIOrdenController {
 
-	@Autowired
-	private IOrdenService ordenService;
+    @Autowired
+    private IOrdenService ordenService;
 
-	@Autowired
-	private IDetalleOrdenService detalleOrdenService;
+    @Autowired
+    private IDetalleOrdenService detalleOrdenService;
 
-	@Autowired
-	private IUsuarioService usuarioService;
+    @Autowired
+    private IUsuarioService usuarioService;
 
-	@Autowired
-	private IProductoService productoService;
+    @Autowired
+    private IProductoService productoService;
 
-	// Obtener todas las órdenes
-	@GetMapping("/list")
-	public List<Orden> listarOrdenes() {
-		return ordenService.findAll();
-	}
+    @PostMapping("/create")
+    public Orden crearOrden(@RequestBody Orden orden) {
 
-	// Obtener una orden por ID
-	@GetMapping("/orden/{id}")
-	public Optional<Orden> obtenerOrden(@PathVariable Integer id) {
-		return ordenService.findById(id);
-	}
+        // Fecha actual
+        orden.setFechaCreacion(LocalDate.now());
 
-	@PostMapping("/create")
-	public Orden crearOrden(@RequestBody Orden orden) {
+        // Numero orden generado
+        orden.setNumero(ordenService.generarNumeroOrden());
 
-	    // Fecha
-	    orden.setFechacreacion(new java.sql.Date(System.currentTimeMillis()));
+        // Verificar usuario
+        Usuario usuario = usuarioService.findById(orden.getUsuario().getId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        orden.setUsuario(usuario);
 
-	    // Número de orden
-	    orden.setNumero(ordenService.generarNumeroOrden());
+        // Si no hay detalles
+        if (orden.getDetalles() == null || orden.getDetalles().isEmpty()) {
+            orden.setTotal(0.0);
+            return ordenService.save(orden);
+        }
 
-	    double total = 0.0;
+        // Guardar orden inicial
+        Orden nuevaOrden = ordenService.save(orden);
 
-	    // Verificar usuario
-	    Usuario usuario = usuarioService.findById(orden.getUsuario().getId())
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        double total = 0.0;
 
-	    orden.setUsuario(usuario);
+        for (DetalleOrden detalle : orden.getDetalles()) {
 
-	    // Guardar orden (ID generado)
-	    Orden nuevaOrden = ordenService.save(orden);
+            Producto producto = productoService.findById(detalle.getProducto().getId())
+                    .orElseThrow(() ->
+                            new RuntimeException("Producto no encontrado: ID " + detalle.getProducto().getId()));
 
-	    // Procesar detalles
-	    for (DetalleOrden detalle : orden.getDetalle()) {
+            if (producto.getCantidad() < detalle.getCantidad()) {
+                throw new RuntimeException("Stock insuficiente para: " + producto.getNombre());
+            }
 
-	        Producto producto = productoService.findById(detalle.getProducto().getId())
-	                .orElseThrow(() -> new RuntimeException(
-	                        "Producto no encontrado: ID " + detalle.getProducto().getId()));
+            detalle.setProducto(producto);
+            detalle.setNombre(producto.getNombre());
+            detalle.setPrecio(producto.getPrecio());
 
-	        // Verificar stock
-	        if (producto.getCantidad() < detalle.getCantidad()) {
-	            throw new RuntimeException("Stock insuficiente para: " + producto.getNombre());
-	        }
+            detalle.setTotal(detalle.getCantidad() * producto.getPrecio());
+            total += detalle.getTotal();
 
-	        // Poner precio del producto
-	        detalle.setPrecio(producto.getPrecio());
+            producto.setCantidad(producto.getCantidad() - detalle.getCantidad());
+            productoService.save(producto);
 
-	        // Subtotal
-	        detalle.setTotal(detalle.getCantidad() * producto.getPrecio());
-	        total += detalle.getTotal();
+            detalle.setOrden(nuevaOrden);
 
-	        // Descontar stock
-	        producto.setCantidad(producto.getCantidad() - detalle.getCantidad());
-	        productoService.save(producto);
+            detalleOrdenService.save(detalle);
+        }
 
-	        // Relacionar con la orden
-	        detalle.setOrden(nuevaOrden);
+        nuevaOrden.setTotal(total);
+        ordenService.save(nuevaOrden);
 
-	        detalleOrdenService.save(detalle);
-	    }
-
-	    // Guardar total correcto
-	    nuevaOrden.setTotal(total);
-	    ordenService.save(nuevaOrden);
-
-	    return nuevaOrden;
-	}
+        return nuevaOrden;
+    }
 }
