@@ -17,4 +17,8 @@ public interface IOrdenService {
 	public Optional<Orden> findById(Integer id);
 
 	public String generarNumeroOrden();
+
+	public Optional<Orden> get(Integer id);
+
+	public Orden findTopByOrderByIdDesc();
 }

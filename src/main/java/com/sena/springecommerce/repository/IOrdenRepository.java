@@ -12,4 +12,6 @@ import com.sena.springecommerce.model.Usuario;
 public interface IOrdenRepository extends JpaRepository<Orden, Integer> {
 
 	List<Orden> findByUsuario(Usuario usuario);
+	Orden findTopByOrderByIdDesc();
+
 }

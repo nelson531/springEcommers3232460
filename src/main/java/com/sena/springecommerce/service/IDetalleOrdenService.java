@@ -7,7 +7,7 @@ import com.sena.springecommerce.model.DetalleOrden;
 import com.sena.springecommerce.repository.IDetalleOrdenRepository;
 
 @Service
-public class DetalleOrdenServiceImplement implements IDetalleOrden {
+public class IDetalleOrdenService implements IDetalleOrden {
 
 	@Autowired
 	private IDetalleOrdenRepository detalleOrdenRepository;

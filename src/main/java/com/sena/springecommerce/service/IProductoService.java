@@ -17,4 +17,6 @@ public interface IProductoService {
 
 	public List<Producto> findAll();
 
+	public Optional<Producto> findById(Integer id);
+
 }

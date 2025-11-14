@@ -46,4 +46,10 @@ public class ProductoServiceImplement implements IProductoService {
 		return productoRepository.findAll();
 	}
 
+	@Override
+	public Optional<Producto> findById(Integer id) {
+		// TODO Auto-generated method stub
+		return productoRepository.findById(id);
+	}
+
 }

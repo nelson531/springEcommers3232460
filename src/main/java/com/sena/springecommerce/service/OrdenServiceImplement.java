@@ -13,63 +13,57 @@ import com.sena.springecommerce.repository.IOrdenRepository;
 
 @Service
 public class OrdenServiceImplement implements IOrdenService {
-
+	
 	@Autowired
 	private IOrdenRepository ordenRepository;
 
 	@Override
+	public String generarNumeroOrden() {
+
+	    List<Orden> ordenes = ordenRepository.findAll(); // ← CAMBIO CLAVE
+	    List<Integer> numeros = new ArrayList<>();
+
+	    // Filtrar solo los números puros, ignorar "ORD-xxxxx"
+	    ordenes.forEach(o -> {
+	        if (o.getNumero() != null && o.getNumero().matches("\\d+")) {
+	            numeros.add(Integer.parseInt(o.getNumero()));
+	        }
+	    });
+
+	    int numero = numeros.isEmpty()
+	    		? 1
+	    		: numeros.stream().max(Integer::compare).get() + 1;
+
+	    return String.format("%012d", numero); // ← Mucho más limpio
+	}
+
+	@Override
 	public Orden save(Orden orden) {
-		// TODO Auto-generated method stub
 		return ordenRepository.save(orden);
 	}
 
 	@Override
 	public List<Orden> findAll() {
-		// TODO Auto-generated method stub
 		return ordenRepository.findAll();
 	}
 
 	@Override
 	public List<Orden> findAllUsuario(Usuario usuario) {
-		// TODO Auto-generated method stub
 		return ordenRepository.findByUsuario(usuario);
 	}
 
 	@Override
 	public Optional<Orden> findById(Integer id) {
-		// TODO Auto-generated method stub
 		return ordenRepository.findById(id);
 	}
 
 	@Override
-	public String generarNumeroOrden() {
-		// TODO Auto-generated method stub
-		int numero = 0;
-		String numeroConcatenado = "";
-		List<Orden> ordenes = findAll();
-		List<Integer> numeros = new ArrayList<>();
-		// funciones de java8
-		// Variables anonimas
-		ordenes.stream().forEach(o -> numeros.add(Integer.parseInt(o.getNumero())));
-		// Validacion
-		if (ordenes.isEmpty()) {
-			numero = 1;
-		} else {
-			numero = numeros.stream().max(Integer::compare).get();
-			numero++;
-		}
-		// Numero de ordenes
-		if (numero < 10) {
-			numeroConcatenado = "000000000000" + String.valueOf(numero);
-			
-		} else if (numero < 100) {
-			numeroConcatenado = "00000000000" + String.valueOf(numero);
+	public Optional<Orden> get(Integer id) {
+		return ordenRepository.findById(id);
+	}
 
-		} else if (numero < 1000) {
-			numeroConcatenado = "0000000000" + String.valueOf(numero);
-
-		}
-
-		return numeroConcatenado;
+	@Override
+	public Orden findTopByOrderByIdDesc() {
+		return ordenRepository.findTopByOrderByIdDesc();
 	}
 }

@@ -1,5 +1,6 @@
 package com.sena.springecommerce.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,16 +21,15 @@ public class Orden {
 	private Integer id;
 	private String numero;
 	private Date fechacreacion;
-	private Double Total;
+	private Double total;
 
 	@ManyToOne
 	private Usuario usuario;
 
 	@OneToMany(mappedBy = "orden")
-	private List<DetalleOrden> detalle;
+	private List<DetalleOrden> detalle = new ArrayList<>(); // ✅ Se inicializa aquí
 
 	public Orden() {
-
 	}
 
 	public Orden(Integer id, String numero, Date fechacreacion, Double total) {
@@ -37,7 +37,7 @@ public class Orden {
 		this.id = id;
 		this.numero = numero;
 		this.fechacreacion = fechacreacion;
-		Total = total;
+		this.total = total;
 	}
 
 	public Integer getId() {
@@ -65,11 +65,11 @@ public class Orden {
 	}
 
 	public Double getTotal() {
-		return Total;
+		return total;
 	}
 
 	public void setTotal(Double total) {
-		Total = total;
+		this.total = total;
 	}
 
 	public Usuario getUsuario() {
@@ -90,7 +90,6 @@ public class Orden {
 
 	@Override
 	public String toString() {
-		return "Orden [id=" + id + ", numero=" + numero + ", fechacreacion=" + fechacreacion + ", Total=" + Total + "]";
+		return "Orden [id=" + id + ", numero=" + numero + ", fechacreacion=" + fechacreacion + ", Total=" + total + "]";
 	}
-
 }
