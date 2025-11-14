@@ -30,6 +30,12 @@ public class APIOrdenController {
 
     @Autowired
     private IProductoService productoService;
+    
+    @GetMapping("/list")
+    public Iterable<Orden> listarOrdenesIterable() {
+    	    return ordenService.findAll();
+    	
+    }
 
     @PostMapping("/create")
     public Orden crearOrden(@RequestBody Orden orden) {
@@ -37,7 +43,7 @@ public class APIOrdenController {
         // Fecha actual
         orden.setFechaCreacion(LocalDate.now());
 
-        // Numero orden generado
+        // Numero orden 
         orden.setNumero(ordenService.generarNumeroOrden());
 
         // Verificar usuario
@@ -51,7 +57,7 @@ public class APIOrdenController {
             return ordenService.save(orden);
         }
 
-        // Guardar orden inicial
+        // Guardar orden 
         Orden nuevaOrden = ordenService.save(orden);
 
         double total = 0.0;
@@ -86,4 +92,5 @@ public class APIOrdenController {
 
         return nuevaOrden;
     }
+   
 }
